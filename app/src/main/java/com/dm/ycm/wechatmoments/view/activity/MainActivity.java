@@ -5,8 +5,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.LinearLayout;
 
 import com.dm.ycm.wechatmoments.R;
 import com.dm.ycm.wechatmoments.common.Constdef;
@@ -36,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements TweetsContract.Vi
     private LinearLayoutManager layoutManager;
     private SwipeRefreshLayout refreshLayout;
     private TweetCache tweetCache;
-    private LinearLayout loading_ll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements TweetsContract.Vi
         tweetPresenter.attachView(this);
         recyclerView.setAdapter(tweetAdapter);
         tweetCache = new TweetCache();
-        loading_ll.setVisibility(View.VISIBLE);
+        refreshLayout.setRefreshing(true);
         loadUserInfo(Constdef.USER_NAME);
         recyclerView.setHasFixedSize(true);
     }
@@ -58,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements TweetsContract.Vi
         layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.moments_rv);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.freshlayout);
-        loading_ll = (LinearLayout) findViewById(R.id.loading_ll);
         refreshLayout.setOnRefreshListener(this);
         recyclerView.setLayoutManager(layoutManager);
     }
@@ -118,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements TweetsContract.Vi
         List<TweetBean> tweetBeanList = tweetAdapter.getDataSource();
         if (tweetAdapter != null) {
             if (tweetBeanList == null) {
-                loading_ll.setVisibility(View.GONE);
+                refreshLayout.setRefreshing(false);
                 tweetAdapter.setDataSource(dataSource);
             } else if (tweetBeanList.isEmpty()) {
                 tweetAdapter.setDataSource(dataSource);
